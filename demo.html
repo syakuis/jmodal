@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+<script src="./jquery.syaku.modal.js" /></script>
+
+</head>
+<body>
+<div class="container">
+
+<div class="page-header">
+	<h1>jQuery Syaku Modal</h1>
+</div>
+
+<p class="lead"><i class="fa fa-check"></i> 기본 옵션</p>
+<pre>
+default = {
+	'backgroundColor': '#000', // 배경색
+	'opacity': 0.75, // 배경 투명도
+	'zIndex': 100, // 모달 레이어번호
+	'beforeOpen': null, // 열기 전 이벤트
+	'afterOpen': null, // 열기 후 이벤트
+	'beforeClose': null, // 닫기 전 이벤트
+	'afterClose': null, // 닫기 후 이벤트
+	'class': null // 직접 클래스 추가.
+}
+</pre>
+<hr>
+
+<p class="lead"><i class="fa fa-check"></i> 모달 열기</p>
+<div class="row">
+	<div class="col-md-4">
+		<div id="modal1" style="display:none;">esc 키로 닫을 수 있다.</div>
+		<button type="button" class="btn btn-danger" id="btn1">열기</button>
+	</div>
+	<div class="col-md-8">
+		<pre>
+var modal = $('#modal1').jmodal();
+$('#btn1').click(function() {
+	modal.open();
+});
+		</pre>
+	</div>
+</div>
+<script type="text/javascript">
+	var modal = $('#modal1').jmodal();
+	$('#btn1').click(function() {
+		modal.open();
+	});
+</script>
+<hr>
+
+<p class="lead"><i class="fa fa-check"></i> 모달 닫기</p>
+<div class="row">
+	<div class="col-md-4">
+		<div id="modal2" style="display:none;">
+		esc 키로 닫을 수 있다.
+		<button type="button" class="btn btn-danger" id="close2">닫기</button>
+		</div>
+		<button type="button" class="btn btn-danger" id="btn2">열기</button>
+	</div>
+	<div class="col-md-8">
+		<pre>
+var modal2 = $('#modal2').jmodal();
+$('#btn2').click(function() {
+	modal2.open();
+});
+$('#close2').click(function() {
+	modal2.close();
+});
+		</pre>
+	</div>
+</div>
+<script type="text/javascript">
+	var modal2 = $('#modal2').jmodal();
+	$('#btn2').click(function() {
+		modal2.open();
+	});
+	$('#close2').click(function() {
+		modal2.close();
+	});
+</script>
+<hr>
+
+
+<p class="lead"><i class="fa fa-check"></i> 다중 모달</p>
+<div class="row">
+	<div class="col-md-4">
+		<div id="modal3" style="display:none;">
+		esc 키로 닫을 수 있다.
+		<button type="button" class="btn btn-danger" id="close3">닫기</button>
+		<button type="button" class="btn btn-danger" id="btn4">열기</button>
+		</div>
+		<div id="modal4" style="display:none;">
+		esc 키로 닫을 수 있다.
+		</div>
+		<button type="button" class="btn btn-danger" id="btn3">열기</button>
+	</div>
+	<div class="col-md-8">
+		<pre>
+var modal = $('#modal1').jmodal();
+$('#btn1').click(function() {
+	modal.open();
+});
+		</pre>
+	</div>
+</div>
+<script type="text/javascript">
+	var modal3 = $('#modal3').jmodal();
+	$('#btn3').click(function() {
+		modal3.open();
+	});
+	$('#close3').click(function() {
+		modal3.close();
+	});
+
+	var modal4 = $('#modal4').jmodal();
+	$('#btn4').click(function() {
+		modal4.open();
+	});
+</script>
+<hr>
+
+</div>
+</body>
+</html>

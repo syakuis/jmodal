@@ -21,12 +21,14 @@
 
 	var C_STYLE = "display:none; background: #fff;padding: 15px 30px;-webkit-border-radius: 8px;-moz-border-radius: 8px;-o-border-radius: 8px;-ms-border-radius: 8px;border-radius: 8px;-webkit-box-shadow: 0 0 10px #000;-moz-box-shadow: 0 0 10px #000;-o-box-shadow: 0 0 10px #000;-ms-box-shadow: 0 0 10px #000;box-shadow: 0 0 10px #000;";
 	var B_STYLE = "display:none; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; position: fixed";
+	var CLOSE_STYLE = "position: absolute;top: -12.5px;right: -12.5px;display: block;width: 30px;height: 30px;text-indent: -9999px;background: url(./close.png) no-repeat 0 0;";
 
 	// private
 	var _jmodal = {
 		'target': null,
 		'options': {
 			'backgroundColor': '#000', // 배경색
+			'buttonClose': false, // 닫기 버튼 사용여부
 			'opacity': 0.75, // 배경 투명도
 			'zIndex': 100, // 모달 레이어번호
 			'beforeOpen': null, // 열기 전 이벤트
@@ -91,6 +93,17 @@
 			$('body').append(target);
 		},
 
+		'buttonClose': function(object) {
+			var index = this.modal.length;
+
+			return $('<a href="#" style="' + CLOSE_STYLE + '"></a>').click(function (event) {
+				event.preventDefault();
+				_jmodal.close();
+			}).css({
+				'zIndex': object.options.zIndex + 1 + index
+			});
+		},
+
 		'center': function(object) {
 			var target = object.target;
 
@@ -102,27 +115,6 @@
 			});
 		},
 
-		'open': function() {
-			var object = this.getModel();
-			if (object == null) return;
-
-			if (object.options.beforeOpen != null) {
-				if (object.options.beforeOpen() == false) return;
-			}
-
-			object.background = this.background(object);
-			this.content(object);
-			this.center(object);
-
-			object.background.show();
-			object.target.show();
-
-			if (object.options.drag == true) object.target.draggable();
-
-			if (object.options.afterOpen != null) object.options.afterOpen();
-
-		},
-
 		'close': function() {
 			var object = this.getModel();
 			if (object == null) return;
@@ -130,19 +122,13 @@
 			if (object.options.beforeClose != null) {
 				if (object.options.beforeClose() == false) return;
 			}
-
-			if (object.options.reload) {
-				object.target.remove();
-				object.background.remove();
-			} else {
-				object.target.hide();
-				object.background.hide();
-			}
+		
+			object.target.hide();
+			object.background.remove();
 			
-
-			if (object.options.afterClose !== null) object.options.afterClose();
-
 			this.modal.pop();
+			
+			if (object.options.afterClose !== null) object.options.afterClose();
 		}
 	};
 
@@ -163,11 +149,18 @@
 			}
 
 			object.background = _jmodal.background(object);
+			
+			if (object.options.buttonClose == true) {
+				object.target.append( _jmodal.buttonClose(object) );
+			}
+
 			_jmodal.content(object);
 			_jmodal.center(object);
 
 			object.background.show();
 			object.target.show();
+
+			if (object.options.drag == true) object.target.draggable();
 
 			if (object.options.afterOpen != null) object.options.afterOpen();
 		}

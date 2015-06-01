@@ -19,9 +19,10 @@
 } (function($) {
 	'use strict';
 
-	var C_STYLE = "display:none; background: #fff;padding: 15px 30px;-webkit-border-radius: 8px;-moz-border-radius: 8px;-o-border-radius: 8px;-ms-border-radius: 8px;border-radius: 8px;-webkit-box-shadow: 0 0 10px #000;-moz-box-shadow: 0 0 10px #000;-o-box-shadow: 0 0 10px #000;-ms-box-shadow: 0 0 10px #000;box-shadow: 0 0 10px #000;";
-	var B_STYLE = "display:none; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; position: fixed";
+	var C_STYLE = "background: #fff;padding: 15px 30px;-webkit-border-radius: 8px;-moz-border-radius: 8px;-o-border-radius: 8px;-ms-border-radius: 8px;border-radius: 8px;-webkit-box-shadow: 0 0 10px #000;-moz-box-shadow: 0 0 10px #000;-o-box-shadow: 0 0 10px #000;-ms-box-shadow: 0 0 10px #000;box-shadow: 0 0 10px #000;";
+	var B_STYLE = "top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; position: fixed";
 	var CLOSE_STYLE = "position: absolute;top: -12.5px;right: -12.5px;display: block;width: 30px;height: 30px;text-indent: -9999px;background: url(./close.png) no-repeat 0 0;";
+	var modal_index = 0;
 
 	// private
 	var _jmodal = {
@@ -40,11 +41,6 @@
 		},
 
 		'modal': [],
-		'getModel': function() {
-			var index = this.modal.length - 1;
-			if (0 > index) return null;
-			return this.modal[index];
-		},
 
 		'config': function(options) {
 			var O = $.extend(true, { }, _jmodal.options, options);
@@ -55,16 +51,12 @@
 		'background': function(object) {
 			var options = object.options;
 
-			var index = this.modal.length;
-
 			var B = $('<div style="' + B_STYLE + '"></div>').addClass('syaku-backer').css({
-				zIndex: options.zIndex + index,
+				zIndex: options.zIndex + modal_index,
 				background: options.backgroundColor,
 				opacity: options.opacity
 			});
 			
-			$('body').append(B);
-
 			return B;
 		},
 
@@ -72,8 +64,6 @@
 			var options = object.options;
 			var target = object.target;
 			var B = object.background;
-
-			var index = this.modal.length;
 
 			if (options.class == null) { 
 				target.attr('style', C_STYLE);
@@ -83,25 +73,14 @@
 
 			var style = {
 				'position': 'fixed',
-				'zIndex': options.zIndex + 1 + index
+				'zIndex': options.zIndex + 1 + modal_index
 			};
 
-			if (options.width != null) style.width = options.width;
-
+			if (options.width != null) style['width'] = options.width;
+			
 			target.addClass('syaku-content').css(style);
 
-			$('body').append(target);
-		},
-
-		'buttonClose': function(object) {
-			var index = this.modal.length;
-
-			return $('<a href="#" style="' + CLOSE_STYLE + '"></a>').click(function (event) {
-				event.preventDefault();
-				_jmodal.close();
-			}).css({
-				'zIndex': object.options.zIndex + 1 + index
-			});
+			return target;
 		},
 
 		'center': function(object) {
@@ -116,19 +95,14 @@
 		},
 
 		'close': function() {
-			var object = this.getModel();
-			if (object == null) return;
-
-			if (object.options.beforeClose != null) {
-				if (object.options.beforeClose() == false) return;
-			}
-		
-			object.target.hide();
-			object.background.remove();
+			if (this.modal.length == 0) return;
 			
+			var instance = this.modal[this.modal.length-1];
+			if (typeof instance.object.options.beforeClose === 'function') instance.object.options.beforeClose(instance.object);
+			instance.modal.hide();
+			$('.syaku-backer',instance.modal).remove();
 			this.modal.pop();
-			
-			if (object.options.afterClose !== null) object.options.afterClose();
+			if (typeof instance.object.options.afterClose === 'function') instance.object.options.afterClose(instance.object);
 		}
 	};
 
@@ -138,31 +112,47 @@
 		this.version = '1.0';
 
 		// 최종 옵션
+		this.object = object;
 		this.options = object.options;
-		this.target = object.target;
+		//this.target = object.target;
+
+		this.modal = null;
+
+		this.create = function() {
+
+
+			this.modal = $('<div class="syaku-modal" style="display:none;"></div>');
+
+			$('body').append(this.modal);
+
+			_jmodal.center(object);
+		}
 
 		this.open = function() {
-			_jmodal.modal.push(object);
+			if (typeof object.options.beforeOpen === 'function') object.options.beforeOpen(object)
 
-			if (object.options.beforeOpen != null) {
-				if (object.options.beforeOpen() == false) return;
-			}
-
-			object.background = _jmodal.background(object);
+			modal_index++;
 			
 			if (object.options.buttonClose == true) {
-				object.target.append( _jmodal.buttonClose(object) );
+				object.target.append( 
+
+					$('<a href="#" style="' + CLOSE_STYLE + '"></a>').click(function (event) {
+						event.preventDefault();
+						$this.close();
+					}).css({
+						'zIndex': object.options.zIndex + 1 + modal_index
+					})
+				);
 			}
 
-			_jmodal.content(object);
+			object.modal.push($this);
+			this.modal.append(_jmodal.background(object)).append(_jmodal.content(object));
+			this.modal.show();
+
+			// 정확한 위치를 잡기 위해 한번더 센터.
 			_jmodal.center(object);
 
-			object.background.show();
-			object.target.show();
-
-			if (object.options.drag == true) object.target.draggable();
-
-			if (object.options.afterOpen != null) object.options.afterOpen();
+			if (typeof object.options.afterOpen === 'function') object.options.afterOpen(object)
 		}
 
 		this.close = function() {
@@ -186,6 +176,7 @@
 		object.target.hide();
 
 		var instance = new jmodal( object );
+		instance.create();
 
 		return instance;
 	};

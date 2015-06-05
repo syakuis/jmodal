@@ -28,6 +28,8 @@
 	var _jmodal = {
 		'target': null,
 		'options': {
+			'esc': true, // esc 닫기 사용여부
+			'focus': null, // 열릴때 포커스 활성화
 			'backgroundColor': '#000', // 배경색
 			'buttonClose': false, // 닫기 버튼 사용여부
 			'opacity': 0.75, // 배경 투명도
@@ -52,9 +54,9 @@
 			var options = object.options;
 
 			var B = $('<div style="' + B_STYLE + '"></div>').addClass('syaku-backer').css({
-				zIndex: options.zIndex + modal_index,
-				background: options.backgroundColor,
-				opacity: options.opacity
+				'zIndex': options.zIndex + modal_index,
+				'background': options.backgroundColor,
+				'opacity': options.opacity
 			});
 			
 			return B;
@@ -94,10 +96,14 @@
 			});
 		},
 
-		'close': function() {
+		'close': function(esc) {
 			if (this.modal.length == 0) return;
 			
 			var instance = this.modal[this.modal.length-1];
+			if (esc == true) {
+				if (instance.object.options.esc == false ) return;
+			}
+			
 			if (typeof instance.object.options.beforeClose === 'function') instance.object.options.beforeClose(instance.object);
 			instance.modal.hide();
 			$('.syaku-backer',instance.modal).remove();
@@ -114,23 +120,17 @@
 		// 최종 옵션
 		this.object = object;
 		this.options = object.options;
-		//this.target = object.target;
-
-		this.modal = null;
-
-		this.create = function() {
-
-
-			this.modal = $('<div class="syaku-modal" style="display:none;"></div>');
-
-			$('body').append(this.modal);
-
-			_jmodal.center(object);
-		}
+		this.target = object.target;
+		
+		this.modal = $('<div class="syaku-modal" style="display:none;"></div>');
+		$('body').append(this.modal);
+		_jmodal.center(object);
 
 		this.open = function() {
-			if (typeof object.options.beforeOpen === 'function') object.options.beforeOpen(object)
-
+			if ( $('.syaku-backer', this.modal).length > 0 ) return;
+			
+			if (typeof object.options.beforeOpen === 'function') object.options.beforeOpen(object);
+			
 			modal_index++;
 			
 			if (object.options.buttonClose == true) {
@@ -146,12 +146,14 @@
 			}
 
 			object.modal.push($this);
-			this.modal.append(_jmodal.background(object)).append(_jmodal.content(object));
+			this.modal.append(_jmodal.background($this)).append(_jmodal.content(object));
 			this.modal.show();
 
 			// 정확한 위치를 잡기 위해 한번더 센터.
 			_jmodal.center(object);
-
+			
+			if (object.options.focus != null) $(object.options.focus,$this.modal).focus();
+			
 			if (typeof object.options.afterOpen === 'function') object.options.afterOpen(object)
 		}
 
@@ -176,14 +178,13 @@
 		object.target.hide();
 
 		var instance = new jmodal( object );
-		instance.create();
 
 		return instance;
 	};
 
 	$(document).on('keydown.syaku-modal', function(event) {
 		if (event.keyCode == 27) {
-			_jmodal.close();
+			_jmodal.close(true);
 		}
 	});
 

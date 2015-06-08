@@ -1,7 +1,8 @@
 ## jmodal
 jmodal 은 jQuery Modal 이며, jQuery 플러그인 입니다.
 
-> 데모: http://syakuis.github.io/demo/jmodal/demo.html
+> Github: https://github.com/syakuis/jmodal
+데모: http://syakuis.github.io/demo/jmodal/demo.html
 
 ### 지원
 > 아주 심플한 모달을 지원합니다.
@@ -11,24 +12,29 @@ jmodal 은 jQuery Modal 이며, jQuery 플러그인 입니다.
 
 ### 설치
 ```
+bower install syaku-jmodal
+```
+
+```javascript
 <script src="./jquery.syaku.modal.js" /></script>
 ```
 
 ### 실행
-```
+```javascript
 var modal = $('<div>모달</div>').jmodal();
 ```
 
 ### 열기와 닫기
-```
+```javascript
 modal.open();
 ```
-```
+
+```javascript
 modal.close();
 ```
 
 ### 기본 옵션
-```
+```javascript
 'backgroundColor': '#000', // 배경색
 'buttonClose': false, // 닫기 버튼 사용여부
 'opacity': 0.75, // 배경 투명도

@@ -11,10 +11,6 @@ jmodal 은 jQuery Modal 이며, jQuery 플러그인 입니다.
 
 ### 설치
 ```
-bower install syaku-jmodal
-```
-
-```
 <script src="./jquery.syaku.modal.js" /></script>
 ```
 

@@ -19,15 +19,17 @@
 } (function($) {
 	'use strict';
 
-	var C_STYLE = "background: #fff;padding: 15px 30px;-webkit-border-radius: 8px;-moz-border-radius: 8px;-o-border-radius: 8px;-ms-border-radius: 8px;border-radius: 8px;-webkit-box-shadow: 0 0 10px #000;-moz-box-shadow: 0 0 10px #000;-o-box-shadow: 0 0 10px #000;-ms-box-shadow: 0 0 10px #000;box-shadow: 0 0 10px #000;";
-	var B_STYLE = "top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; position: fixed";
-	var CLOSE_STYLE = "position: absolute;top: -12.5px;right: -12.5px;display: block;width: 30px;height: 30px;text-indent: -9999px;background: url(./close.png) no-repeat 0 0;";
 	var modal_index = 0;
 
 	// private
 	var _jmodal = {
 		'target': null,
 		'options': {
+			'auto': false, // 자동 활성화.
+			'padding': '15px', // 모달 여백 null = 사용하지 않음
+			'radius': '8px', // 모달 테두리 라운드 null = 사용하지 않음
+			'remove': false, // 직접 생성한 대상이 매번 새로 생성될때 제거하기 위함.
+			'single': null, // 그룹으로 묶어 해당 모달을 오직 1개만 생성되게 함.
 			'esc': true, // esc 닫기 사용여부
 			'focus': null, // 열릴때 포커스 활성화
 			'backgroundColor': '#000', // 배경색
@@ -53,7 +55,7 @@
 		'background': function(object) {
 			var options = object.options;
 
-			var B = $('<div style="' + B_STYLE + '"></div>').addClass('syaku-backer').css({
+			var B = $('<div class="background"></div>').addClass('syaku-backer').css({
 				'zIndex': options.zIndex + modal_index,
 				'background': options.backgroundColor,
 				'opacity': options.opacity
@@ -66,12 +68,23 @@
 			var options = object.options;
 			var target = object.target;
 			var B = object.background;
-
+			var CSS = '';
+			if ( object.options.padding != null ) CSS = CSS + 'padding: ' + object.options.padding + ';';
+			if ( object.options.radius != null ) {
+				CSS = CSS +
+				'-webkit-border-radius: ' + object.options.radius + ';' + 
+				'-moz-border-radius: ' + object.options.radius + ';'+ 
+				'-o-border-radius: ' + object.options.radius + ';' + 
+				'-ms-border-radius: ' + object.options.radius + ';' +
+				'border-radius: ' + object.options.radius + ';';
+			}
 			if (options.class == null) { 
-				target.attr('style', C_STYLE);
+				target.attr('style', CSS);
 			} else {
 				target.addClass(options.class);
 			}
+
+			target.addClass('content');
 
 			var style = {
 				'position': 'fixed',
@@ -105,28 +118,52 @@
 			}
 			
 			if (typeof instance.object.options.beforeClose === 'function') instance.object.options.beforeClose(instance.object);
-			instance.modal.hide();
-			$('.syaku-backer',instance.modal).remove();
+
+			if (instance.object.options.remove == false ) {
+				instance.modal.hide();
+				$('.syaku-backer',instance.modal).remove();
+				$('.button-close',instance.modal).remove();
+			} else {
+				instance.modal.remove();
+			}
+
 			this.modal.pop();
 			if (typeof instance.object.options.afterClose === 'function') instance.object.options.afterClose(instance.object);
+		},
+
+		'remove': function() {
+			if (this.modal.length == 0) return;
+			var instance = this.modal[this.modal.length-1];
+			instance.modal.remove();
+			this.modal.pop();
 		}
 	};
 
 	// class
 	function jmodal(object) {
 		var $this = this;
-		this.version = '1.0';
+		this.version = '1.0.1';
 
 		// 최종 옵션
 		this.object = object;
 		this.options = object.options;
 		this.target = object.target;
-		
-		this.modal = $('<div class="syaku-modal" style="display:none;"></div>');
-		$('body').append(this.modal);
-		_jmodal.center(object);
+		this.modal = null;
+
+		this.init = function() {
+			this.modal = $('<div class="syaku-modal" style="display:none;"></div>');
+			if (object.options.single != null) { 
+				$('body .syaku-modal.' + object.options.single).each(function() {
+					$(this).remove();
+				});
+				this.modal.addClass(object.options.single);
+			}
+			$('body').append(this.modal);
+			_jmodal.center(object);
+		}
 
 		this.open = function() {
+			if (this.modal == null) this.init();
 			if ( $('.syaku-backer', this.modal).length > 0 ) return;
 			
 			if (typeof object.options.beforeOpen === 'function') object.options.beforeOpen(object);
@@ -136,7 +173,7 @@
 			if (object.options.buttonClose == true) {
 				object.target.append( 
 
-					$('<a href="#" style="' + CLOSE_STYLE + '"></a>').click(function (event) {
+					$('<a href="#" class="button-close"></a>').click(function (event) {
 						event.preventDefault();
 						$this.close();
 					}).css({
@@ -160,6 +197,8 @@
 		this.close = function() {
 			_jmodal.close();
 		}
+
+		if (object.options.auto == true) this.open();
 	};
 
 	// api support

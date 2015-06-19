@@ -10,6 +10,7 @@
 <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 
+<link href="./jquery.syaku.modal.css" rel="stylesheet">
 <script src="./jquery.syaku.modal.js" /></script>
 
 </head>
@@ -23,6 +24,12 @@
 <p class="lead"><i class="fa fa-check"></i> 기본 옵션</p>
 <pre>
 default = {
+	'auto': false, // 자동 활성화.
+	'padding': '15px', // 모달 여백 null = 사용하지 않음
+	'radius': '8px', // 모달 테두리 라운드 null = 사용하지 않음
+	'remove': false,
+	'esc': true, // esc 닫기 사용여부
+	'focus': null, // 열릴때 포커스 활성화
 	'backgroundColor': '#000', // 배경색
 	'buttonClose': false, // 닫기 버튼 사용여부
 	'opacity': 0.75, // 배경 투명도

@@ -35,6 +35,12 @@ modal.close();
 
 ### 기본 옵션
 ```javascript
+'auto': false, // 자동 활성화.
+'padding': '15px', // 모달 여백 null = 사용하지 않음
+'radius': '8px', // 모달 테두리 라운드 null = 사용하지 않음
+'remove': false, // 직접 생성한 대상이 매번 새로 생성될때 제거하기 위함.
+'esc': true, // esc 닫기 사용여부
+'focus': null, // 열릴때 포커스 활성화
 'backgroundColor': '#000', // 배경색
 'buttonClose': false, // 닫기 버튼 사용여부
 'opacity': 0.75, // 배경 투명도

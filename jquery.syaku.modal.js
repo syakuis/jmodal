@@ -68,19 +68,18 @@
 			var options = object.options;
 			var target = object.target;
 			var B = object.background;
-			var CSS = '';
-			if ( object.options.padding != null ) CSS = CSS + 'padding: ' + object.options.padding + ';';
+			var CSS = {};
+			if ( object.options.padding != null ) target.css({'padding': object.options.padding});
 			if ( object.options.radius != null ) {
-				CSS = CSS +
-				'-webkit-border-radius: ' + object.options.radius + ';' + 
-				'-moz-border-radius: ' + object.options.radius + ';'+ 
-				'-o-border-radius: ' + object.options.radius + ';' + 
-				'-ms-border-radius: ' + object.options.radius + ';' +
-				'border-radius: ' + object.options.radius + ';';
+				target.css({
+					'-webkit-border-radius': object.options.radius, 
+					'-moz-border-radius': object.options.radius, 
+					'-o-border-radius': object.options.radius, 
+					'-ms-border-radius': object.options.radius,
+					'border-radius': object.options.radius
+				});
 			}
-			if (options.class == null) { 
-				target.attr('style', CSS);
-			} else {
+			if (options.class != null) {
 				target.addClass(options.class);
 			}
 
@@ -94,7 +93,7 @@
 			if (options.width != null) style['width'] = options.width;
 			
 			target.addClass('syaku-content').css(style);
-
+			object.target.show();
 			return target;
 		},
 
@@ -142,7 +141,7 @@
 	// class
 	function jmodal(object) {
 		var $this = this;
-		this.version = '1.0.1';
+		this.version = '1.0.2';
 
 		// 최종 옵션
 		this.object = object;

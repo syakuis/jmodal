@@ -35,13 +35,14 @@
 			'backgroundColor': '#000', // 배경색
 			'buttonClose': false, // 닫기 버튼 사용여부
 			'opacity': 0.75, // 배경 투명도
-			'zIndex': 100, // 모달 레이어번호
+			'zIndex': 1030, // 모달 레이어번호 (부트스트랩 1030, 셀렉트2: 1050)
 			'beforeOpen': null, // 열기 전 이벤트
 			'afterOpen': null, // 열기 후 이벤트
 			'beforeClose': null, // 닫기 전 이벤트
 			'afterClose': null, // 닫기 후 이벤트
-			'class': null, // 직접 클래스 추가.
-			'width': null // 모달 고정된 크기
+			'css': null, // 직접 클래스 추가.
+			'width': null, // 모달 고정된 크기
+			'height': null // 모달 고정된 크기
 		},
 
 		'modal': [],
@@ -79,8 +80,8 @@
 					'border-radius': object.options.radius
 				});
 			}
-			if (options.class != null) {
-				target.addClass(options.class);
+			if (options.css != null) {
+				target.addClass(options.css);
 			}
 
 			target.addClass('content');
@@ -91,6 +92,7 @@
 			};
 
 			if (options.width != null) style['width'] = options.width;
+			if (options.height != null) style['height'] = options.height;
 			
 			target.addClass('syaku-content').css(style);
 			object.target.show();

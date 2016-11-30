@@ -15,8 +15,9 @@ jmodal 은 jQuery Modal 이며, jQuery 플러그인 입니다.
 bower install syaku-jmodal
 ```
 
-```javascript
-<script src="./jquery.syaku.modal.js" /></script>
+```html
+<link href="./dist/jquery.syaku.modal.min.css" rel="stylesheet">
+<script src="./dist/jquery.syaku.modal.min.js" /></script>
 ```
 
 ### 실행
